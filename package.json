@@ -1,0 +1,25 @@
+{
+    "name": "distributed-ecom",
+    "version": "0.1.0",
+    "description": "A distributed e-commerce system built with TypeScript and microservices architecture.",
+    "scripts": {
+        "start:gateway": "ts-node src/gateway/gateway.ts",
+        "start:product": "ts-node src/product-service/product.ts",
+        "start:user": "ts-node src/user-serivce/user.ts",
+        "start:order": "ts-node src/order-service/order.ts"
+    },
+    "dependencies": {
+        "express": "^4.21.2",
+        "cors": "^2.8.5",
+        "helmet": "^8.1.0",
+        "redis": "^4.7.0",
+        "@types/node": "^22.13.13",
+        "@types/express": "^5.0.1",
+        "@types/cors": "^2.8.17",
+        "typescript": "^5.8.2",
+        "ts-node": "^10.9.2"
+    },
+    "devDependencies": {
+        "dotenv": "^16.4.7"
+    }
+}
