@@ -9,15 +9,17 @@
         "start:order": "ts-node src/order-service/order.ts"
     },
     "dependencies": {
-        "express": "^4.21.2",
+        "@types/amqplib": "^0.10.7",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.1",
+        "@types/node": "^22.13.13",
+        "amqplib": "^0.10.5",
         "cors": "^2.8.5",
+        "express": "^4.21.2",
         "helmet": "^8.1.0",
         "redis": "^4.7.0",
-        "@types/node": "^22.13.13",
-        "@types/express": "^5.0.1",
-        "@types/cors": "^2.8.17",
-        "typescript": "^5.8.2",
-        "ts-node": "^10.9.2"
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.2"
     },
     "devDependencies": {
         "dotenv": "^16.4.7"

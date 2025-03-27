@@ -22,11 +22,13 @@ const redisClient = createClient({
 // Handle Redis connection errors
 redisClient.on('error', (err) => {
     console.error('redis client error', err);
+    process.exit(1);
 });
 
 // Attempt to connect to Redis, but don't block startup on failure
 redisClient.connect().catch(() => {
     console.log('redis connection failed');
+    process.exit(1);
 });
 
 
@@ -49,6 +51,33 @@ const products: Product[] = [
     },
 ];
 
+const cacheTimeoutString: string | undefined = process.env.CACHE_TIMEOUT;
+if(!cacheTimeoutString) process.exit(1);
+const cacheTimeout: number = parseInt(cacheTimeoutString, 10);
+
+async function updateRedisCache() {
+    try {
+        await redisClient.set('products', JSON.stringify(products), {
+            EX: cacheTimeout,
+        });
+        console.log('Redis cache updated successfully');
+
+        setTimeout(() => {
+            console.log('Cache expired');
+        }, cacheTimeout * 1000);
+
+    } catch (updateRedisError) {
+        console.error('Error updating Redis cache:', updateRedisError);
+        throw updateRedisError;
+    }
+}
+
+try {
+    updateRedisCache();
+} catch (overallError) {
+    console.error('An overall error occurred:', overallError);
+}
+
 app.get('/products', async (req, res) => {
     try {
         const cachedProducts = await redisClient.get('products');
@@ -60,14 +89,13 @@ app.get('/products', async (req, res) => {
             return;
         }
 
-        await redisClient.set('products', JSON.stringify(products), {
-            EX: 900
-        });
-
-        res.json({
-            success: true,
-            data: products
-        });
+        else {
+            console.error('no products in cache');
+            res.status(404).json({
+                success: false,
+                error: 'no products found in the cache'
+            })
+        }
 
     } catch (error) {
         res.status(500).json({
@@ -91,7 +119,10 @@ app.get('/products/:id', async (req, res) => {
             return;
         }
 
+        // searching in the predifened array -- in javascript
         const product = products.find((p) => p.id === parseInt(id, 10))
+    
+        // id is not in the products
         if(!product) {
             res.status(404).json({
                 success: false,
@@ -100,8 +131,9 @@ app.get('/products/:id', async (req, res) => {
             return;
         }
 
+        // the id exists (true) --> add to cache
         await redisClient.set(`product:${id}`, JSON.stringify(product), {
-            EX: 900
+            EX: cacheTimeout
         });
 
         res.json({
@@ -117,6 +149,30 @@ app.get('/products/:id', async (req, res) => {
         });
     }
 });
+
+
+app.post('/products/add/', async (req,res) => {
+
+    try {
+        
+        const { productName, productDes, productPrice } = req.body;
+        console.log( productName, productDes, productPrice );
+        
+
+        res.json({
+            success: true,
+            data: 'this should be changed to the new product ID'
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `failed to add productID:${req.params}`
+        })
+    }
+
+})
 
 
 
