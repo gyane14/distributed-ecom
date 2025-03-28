@@ -5,7 +5,7 @@
     "scripts": {
         "start:gateway": "ts-node src/gateway/gateway.ts",
         "start:product": "ts-node src/product-service/product.ts",
-        "start:user": "ts-node src/user-serivce/user.ts",
+        "start:user": "ts-node src/user-service/user.ts",
         "start:order": "ts-node src/order-service/order.ts"
     },
     "dependencies": {

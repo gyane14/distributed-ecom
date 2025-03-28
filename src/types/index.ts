@@ -29,6 +29,14 @@ export interface Order {
     createdAt: Date;
 }
 
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    address: string;
+}
+
+
 export interface ServiceResponse<T> {
     success: boolean;
     data?: T;

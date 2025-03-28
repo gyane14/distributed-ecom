@@ -52,8 +52,7 @@ const products: Product[] = [
 ];
 
 const cacheTimeoutString: string | undefined = process.env.CACHE_TIMEOUT;
-if(!cacheTimeoutString) process.exit(1);
-const cacheTimeout: number = parseInt(cacheTimeoutString, 10);
+const cacheTimeout: number = parseInt(cacheTimeoutString ?? "600", 10);
 
 async function updateRedisCache() {
     try {
@@ -89,15 +88,13 @@ app.get('/products', async (req, res) => {
             return;
         }
 
-        else {
-            console.error('no products in cache');
-            res.status(404).json({
-                success: false,
-                error: 'no products found in the cache'
-            })
-        }
+        console.error('no products in cache');
+        res.status(404).json({
+            success: false,
+            error: 'no products found in the cache'
+        })
 
-    } catch (error) {
+        } catch (error) {
         res.status(500).json({
             success: false,
             error: `failed to fetch products - error : ${error}`
